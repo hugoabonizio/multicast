@@ -66,4 +66,30 @@ public class Connection {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public static void ping(String orig, String dest) {
+        String parentAddress = dest.split(":")[0];
+        int parentPort = new Integer(dest.split(":")[1]);
+        
+        Message message = new Message();
+        message.setAction(Message.Action.PING);
+        message.setSrc(orig);
+        message.setText("ma oe");
+        try {
+            
+            Socket socket = new Socket(parentAddress, parentPort);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            
+            out.writeObject(message);
+            
+            // wait response...
+            if ((message = (Message) in.readObject()) != null) {
+                System.out.println("ping voltou");
+                return;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

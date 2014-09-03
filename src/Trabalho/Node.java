@@ -40,6 +40,8 @@ public class Node {
                 String parentAddress = fullAddress.split(":")[0];
                 int parentPort = new Integer(fullAddress.split(":")[1]);
                 ask(parentAddress, parentPort);
+            } else {
+                tela.setConnectedTo("root");
             }
 
             new Thread(new WaitConnection()).start();
@@ -92,13 +94,13 @@ public class Node {
                 @Override
                 public void run() {
                     try {
-                        while (true) {
+                        //while (true) {
                             Thread.sleep(2000);
-                            if (pingResults.size() > 0) {
+                            //if (pingResults.size() > 0) {
                                 connectToSomeone();
                                 return;
-                            }
-                        }
+                            //}
+                        //}
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -134,18 +136,27 @@ public class Node {
     }
     
     public void connectToSomeone() {
+        tela.receive("connectar to someone");
+        
         long lowest = -1;
+        long startTime, totalTime;
+        String result = "";
+        
         String resultAddress = "";
         
-        for (Map.Entry<String, Long> entry : pingResults.entrySet()) {
-            tela.receive(entry.getKey() + ": " + new Long(entry.getValue()).toString());
-            if (lowest < 0 || lowest > entry.getValue()) {
-                lowest = entry.getValue();
-                resultAddress = entry.getKey();
+        for (String candidate: tela.getCandidates()) {
+            startTime = System.nanoTime();
+            Connection.ping(me, candidate);
+            totalTime = System.nanoTime() - startTime;
+            if (lowest < 0 || lowest > totalTime) {
+                lowest = totalTime;
+                result = candidate;
             }
         }
-        String parentAddress = resultAddress.split(":")[0];
-        int parentPort = new Integer(resultAddress.split(":")[1]);
+        
+        tela.receive("conectar a " + result);
+        String parentAddress = result.split(":")[0];
+        int parentPort = new Integer(result.split(":")[1]);
         connect(parentAddress, parentPort);
     }
 

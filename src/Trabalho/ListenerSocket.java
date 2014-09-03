@@ -71,8 +71,8 @@ public class ListenerSocket implements Runnable {
                 } else if (action.equals(Action.PING_BACK)) {
                     // PING_BACK
                     
-                    tela.receive("source: " + message.getSrc());
-                    tela.getNode().endPing(message.getSrc());
+                    tela.receive("PING_BACK source: " + message.getSrc());
+                    //tela.getNode().endPing(message.getSrc());
                     
                 } else if (action.equals(Action.ASK)) {
                     // ASK
@@ -98,10 +98,10 @@ public class ListenerSocket implements Runnable {
                 } else if (action.equals(Action.IP)) {
                     // IP
                     
-                    tela.getNode().initPing(message.getSrc());
+                    //tela.getNode().initPing(message.getSrc());
                     
                     tela.receive("recebi esse doido: " + message.getSrc());
-                    //tela.getCandidates().add(message.getSrc());
+                    tela.getCandidates().add(message.getSrc());
                 }
             }
         } catch (Exception ex) {
